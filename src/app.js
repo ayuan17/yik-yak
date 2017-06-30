@@ -1,7 +1,8 @@
 //imort React and sub module Component (es6)
 import React, { Component } from 'react';
-//Render tag in to the dom. Brings our code to the real world
+//Render tag in to the dom. Brings our code to the real world - only renders to root
 import ReactDOM from 'react-dom'
+import Zones from './components/Zones'
 
 class App extends Component {
 
@@ -9,6 +10,7 @@ class App extends Component {
     return (
       <div>
         Hello React
+        <Zones />
       </div>
     )
   }
