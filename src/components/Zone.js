@@ -4,8 +4,10 @@ class Zone extends Component {
   render() {
     return (
 // Zone component
+// { this.props.name } = Zone property in Zones.js
             <div>
-              <h2><a href="#"> Zone 1 </a></h2>
+
+              <h2><a href="#"> { this.props.name } </a></h2>
 
                 <span>30341</span>
                   <br />
