@@ -24,7 +24,7 @@ class Zones extends Component {
         <li><Zone currentZone={zone} /></li>
       )
     })
-//return the listItems variable in the element
+//return the listItems child variable in the element
     return (
       <div>
         <ol>

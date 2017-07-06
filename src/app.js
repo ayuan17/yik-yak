@@ -2,15 +2,16 @@
 import React, { Component } from 'react';
 //Render tag in to the dom. Brings our code to the real world - only renders to root
 import ReactDOM from 'react-dom'
-import Zones from './components/Zones'
+// import Zones from '.components/Zones'
+import Home from './components/Home'
 
 class App extends Component {
 
   render(){
     return (
       <div>
-        Hello React
-        <Zones />
+        Yik Yak Clone!
+        <Home />
       </div>
     )
   }
