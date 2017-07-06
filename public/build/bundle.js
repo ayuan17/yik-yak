@@ -22474,38 +22474,35 @@ var Zones = function (_Component) {
   function Zones() {
     _classCallCheck(this, Zones);
 
-    return _possibleConstructorReturn(this, (Zones.__proto__ || Object.getPrototypeOf(Zones)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Zones.__proto__ || Object.getPrototypeOf(Zones)).call(this));
+
+    _this.state = {
+      list: [{ name: 'Zone 1', zipCode: '30341', numComments: 10 }, { name: 'Zone 2', zipCode: '30342', numComments: 20 }, { name: 'Zone 3', zipCode: '30343', numComments: 30 }, { name: 'Zone 4', zipCode: '30344', numComments: 40 }, { name: 'Zone 5', zipCode: '30345', numComments: 50 }]
+    };
+    return _this;
   }
+  //listItems maps through the zone and index of the array
+
 
   _createClass(Zones, [{
     key: 'render',
     value: function render() {
+
+      var listItems = this.state.list.map(function (zone, i) {
+        return _react2.default.createElement(
+          'li',
+          null,
+          _react2.default.createElement(_Zone2.default, { currentZone: zone })
+        );
+      });
+      //return the listItems variable in the element
       return _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(
           'ol',
           null,
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(_Zone2.default, { name: 'Zone 1' })
-          ),
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(_Zone2.default, { name: 'Zone 2' })
-          ),
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(_Zone2.default, { name: 'Zone 3' })
-          ),
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(_Zone2.default, { name: 'Zone 4' })
-          )
+          listItems
         )
       );
     }
@@ -22533,6 +22530,10 @@ var _react = __webpack_require__(32);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _styles = __webpack_require__(186);
+
+var _styles2 = _interopRequireDefault(_styles);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22551,35 +22552,38 @@ var Zone = function (_Component) {
   }
 
   _createClass(Zone, [{
-    key: "render",
+    key: 'render',
     value: function render() {
       return (
         // Zone component
         // { this.props.name } = Zone property in Zones.js
+        //we take currentZone property and pass in the object properties for each zone
+        //div style, we take the styles const from const styles(object)
         _react2.default.createElement(
-          "div",
-          null,
+          'div',
+          { style: _styles2.default.container },
           _react2.default.createElement(
-            "h2",
-            null,
+            'h2',
+            { style: _styles2.default.header },
             _react2.default.createElement(
-              "a",
-              { href: "#" },
-              " ",
-              this.props.name,
-              " "
+              'a',
+              { style: _styles2.default.title, href: '#' },
+              ' ',
+              this.props.currentZone.name,
+              ' '
             )
           ),
           _react2.default.createElement(
-            "span",
+            'span',
             null,
-            "30341"
+            this.props.currentZone.zipCode
           ),
-          _react2.default.createElement("br", null),
+          _react2.default.createElement('br', null),
           _react2.default.createElement(
-            "span",
+            'span',
             null,
-            "10 comments"
+            this.props.currentZone.numComments,
+            ' comments'
           )
         )
       );
@@ -22590,6 +22594,37 @@ var Zone = function (_Component) {
 }(_react.Component);
 
 exports.default = Zone;
+
+/***/ }),
+/* 186 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  container: {
+    padding: 16,
+    background: '#f9f9f9',
+    marginTop: 12,
+    border: '1px solid #ddd'
+  },
+
+  header: {
+    marginBottom: 0
+  },
+
+  title: {
+    textDecoration: 'none',
+    color: 'red'
+  }
+
+  //export default = es6 version module.exports = ?
+
+};
 
 /***/ })
 /******/ ]);

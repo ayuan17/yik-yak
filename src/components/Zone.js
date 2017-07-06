@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
+import styles from './styles'
 
 class Zone extends Component {
   render() {
     return (
 // Zone component
 // { this.props.name } = Zone property in Zones.js
-            <div>
+//we take currentZone property and pass in the object properties for each zone
+//div style, we take the styles const from const styles(object)
+            <div style= {styles.container}>
 
-              <h2><a href="#"> { this.props.name } </a></h2>
+              <h2 style={styles.header}>
 
-                <span>30341</span>
+                <a style={styles.title} href="#"> { this.props.currentZone.name } </a></h2>
+
+                <span>{ this.props.currentZone.zipCode }</span>
                   <br />
-                <span>10 comments</span>
+                <span>{ this.props.currentZone.numComments } comments</span>
 
             </div>
 
