@@ -22553,38 +22553,37 @@ var Zone = function (_Component) {
 
   _createClass(Zone, [{
     key: 'render',
+
+    //importing styles.zone object from styles.js
     value: function render() {
-      return (
-        // Zone component
-        // { this.props.name } = Zone property in Zones.js
-        //we take currentZone property and pass in the object properties for each zone
-        //div style, we take the styles const from const styles(object)
+
+      var zoneStyle = _styles2.default.zone;
+
+      return _react2.default.createElement(
+        'div',
+        { style: zoneStyle.container },
         _react2.default.createElement(
-          'div',
-          { style: _styles2.default.container },
+          'h2',
+          { style: zoneStyle.header },
           _react2.default.createElement(
-            'h2',
-            { style: _styles2.default.header },
-            _react2.default.createElement(
-              'a',
-              { style: _styles2.default.title, href: '#' },
-              ' ',
-              this.props.currentZone.name,
-              ' '
-            )
-          ),
-          _react2.default.createElement(
-            'span',
-            null,
-            this.props.currentZone.zipCode
-          ),
-          _react2.default.createElement('br', null),
-          _react2.default.createElement(
-            'span',
-            null,
-            this.props.currentZone.numComments,
-            ' comments'
+            'a',
+            { style: zoneStyle.title, href: '#' },
+            ' ',
+            this.props.currentZone.name,
+            ' '
           )
+        ),
+        _react2.default.createElement(
+          'span',
+          null,
+          this.props.currentZone.zipCode
+        ),
+        _react2.default.createElement('br', null),
+        _react2.default.createElement(
+          'span',
+          null,
+          this.props.currentZone.numComments,
+          ' comments'
         )
       );
     }
@@ -22594,6 +22593,11 @@ var Zone = function (_Component) {
 }(_react.Component);
 
 exports.default = Zone;
+
+// Zone component
+// { this.props.name } = Zone property in Zones.js
+//we take currentZone property and pass in the object properties for each zone
+//div style, we take the styles const from const styles(object)
 
 /***/ }),
 /* 186 */
@@ -22606,20 +22610,26 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = {
-  container: {
-    padding: 16,
-    background: '#f9f9f9',
-    marginTop: 12,
-    border: '1px solid #ddd'
-  },
+  //universal styles will apply to entire project
+  universal: {},
 
-  header: {
-    marginBottom: 0
-  },
+  zone: {
+    container: {
+      padding: 16,
+      background: '#f9f9f9',
+      marginTop: 12,
+      border: '1px solid #ddd'
+    },
 
-  title: {
-    textDecoration: 'none',
-    color: 'red'
+    header: {
+      marginTop: 0,
+      marginBottom: 0
+    },
+
+    title: {
+      textDecoration: 'none',
+      color: 'red'
+    }
   }
 
   //export default = es6 version module.exports = ?
