@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 //Render tag in to the dom. Brings our code to the real world - only renders to root
 import ReactDOM from 'react-dom'
 // import Zones from '.components/Zones'
-import Home from './components/Home'
+import Home from './components/layout/Home'
 
 class App extends Component {
 
