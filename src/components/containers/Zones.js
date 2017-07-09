@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import Zone from '../presentation/Zone'
+import Zone from '../presentation/Zone';
+import superagent from 'superagent';
+//superagent similar to axios, http request
+//(err, response) - first throw error (if there is one, then display payload)
 
 //this renders Zone component
 class Zones extends Component {
@@ -12,14 +15,30 @@ class Zones extends Component {
         name: '',
         zipCode: ''
       },
-      list: [
-          {name: 'Zone 1', zipCode: '30341', numComments:10},
-          {name: 'Zone 2', zipCode: '30342', numComments:20},
-          {name: 'Zone 3', zipCode: '30343', numComments:30},
-          {name: 'Zone 4', zipCode: '30344', numComments:40},
-          {name: 'Zone 5', zipCode: '30345', numComments:50}
-      ]
+      list: []
     }
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount')
+//grabbing the API from api/zone and using JSON stringify to display the data
+    superagent
+    .get('/api/zone')
+    .query(null)
+    .set('Accept', 'application/json')
+    .end((err, response) => {
+      if (err){
+        alert('Error: '+err)
+        return
+      }
+
+      console.log(JSON.stringify(response.body))
+      let results = response.body.results
+
+      this.setState({
+        list: results
+      })
+    })
   }
 
   updateZone(event) {

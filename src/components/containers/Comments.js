@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Comment from '../presentation/Comment'
 import styles from './styles'
+import superagent from 'superagent';
 //super = superclass or parent class - adding to the constructor, take out super you're replacing constructor
 class Comments extends Component {
   constructor(){
@@ -12,13 +13,32 @@ class Comments extends Component {
         body: '',
         timestamp: ''
       },
-      list: [
-        { body: 'comment 1', username: 'dtrump', timestamp: '10:30' },
-        { body: 'comment 2', username: 'hclinton', timestamp: '10:45' },
-        { body: 'comment 3', username: 'gjohnson', timestamp: '11:00' }
-      ]
+      list: []
     }
   }
+
+  componentDidMount() {
+    console.log('componentDidMount')
+//grabbing the API from api/comment and using JSON stringify to display the data
+    superagent
+    .get('/api/comment')
+    .query(null)
+    .set('Accept', 'application/json')
+    .end((err, response) => {
+      if (err){
+        alert('Error: '+err)
+        return
+      }
+
+      console.log(JSON.stringify(response.body))
+      let results = response.body.results
+
+      this.setState({
+        list: results
+      })
+    })
+  }
+
 
 //updatedList is making a copy of the array "list"
   submitComment() {
