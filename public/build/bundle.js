@@ -22684,6 +22684,16 @@ var _presentation = __webpack_require__(199);
 
 var _utils = __webpack_require__(84);
 
+var _reactRedux = __webpack_require__(217);
+
+var _actions = __webpack_require__(249);
+
+var _actions2 = _interopRequireDefault(_actions);
+
+var _store = __webpack_require__(245);
+
+var _store2 = _interopRequireDefault(_store);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22705,8 +22715,7 @@ var Zones = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Zones.__proto__ || Object.getPrototypeOf(Zones)).call(this));
 
     _this.state = {
-      selected: 0,
-      list: []
+      // selected: 0
     };
     return _this;
   }
@@ -22723,10 +22732,9 @@ var Zones = function (_Component) {
           alert('Error: ' + err.message);
           return;
         }
-        // console.log('RESULTS: '+JSON.stringify(response.results))
-        _this2.setState({
-          list: response.results
-        });
+        //Dispatch the actions
+        var zones = response.results;
+        _this2.props.zonesReceived(zones);
       });
     }
   }, {
@@ -22743,23 +22751,23 @@ var Zones = function (_Component) {
           alert('ERROR: ' + err.message);
           return;
         }
-
-        console.log('Zone Created: ' + JSON.stringify(response));
-
-        var updatedList = Object.assign([], _this3.state.list);
-        updatedList.push(response.result);
-        _this3.setState({
-          list: updatedList
-        });
+        // console.log('Zone Created: '+JSON.stringify(response))
+        _this3.props.zoneCreated(response.result);
+        // let updatedList = Object.assign([], this.state.list)
+        // updatedList.push(response.result)
+        // this.setState({
+        //   list: updatedList
+        // })
       });
     }
   }, {
     key: 'selectZone',
     value: function selectZone(index) {
       console.log('selectZone: ' + index);
-      this.setState({
-        selected: index
-      });
+      this.props.selectZone(index);
+      // this.setState({
+      //   selected: index
+      // })
     }
 
     //listItems maps through the zone and index of the array
@@ -22769,8 +22777,8 @@ var Zones = function (_Component) {
     value: function render() {
       var _this4 = this;
 
-      var listItems = this.state.list.map(function (zone, i) {
-        var selected = i == _this4.state.selected;
+      var listItems = this.props.list.map(function (zone, i) {
+        var selected = i == _this4.props.selected;
         return _react2.default.createElement(
           'li',
           { key: i },
@@ -22794,7 +22802,31 @@ var Zones = function (_Component) {
   return Zones;
 }(_react.Component);
 
-exports.default = Zones;
+//Redux stuff going on - taking state from redux and assign them as properties to the components this.state -> this.props
+
+
+var stateToProps = function stateToProps(state) {
+  return {
+    list: state.zone.list, //state object is the store (state)
+    selected: state.zone.selectedZone
+  };
+};
+
+var dispatchToProps = function dispatchToProps(dispatch) {
+  return {
+    zonesReceived: function zonesReceived(zones) {
+      return dispatch(_actions2.default.zonesReceived(zones));
+    },
+    zoneCreated: function zoneCreated(zone) {
+      return dispatch(_actions2.default.zoneCreated(zone));
+    },
+    selectZone: function selectZone(index) {
+      return dispatch(_actions2.default.selectZone(index));
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Zones); //connecting redux to the ../stores/store.js
 
 /***/ }),
 /* 189 */
@@ -24895,6 +24927,12 @@ var _styles2 = _interopRequireDefault(_styles);
 
 var _utils = __webpack_require__(84);
 
+var _reactRedux = __webpack_require__(217);
+
+var _actions = __webpack_require__(249);
+
+var _actions2 = _interopRequireDefault(_actions);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24903,6 +24941,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+//Use redux when data needs to be shared across more than one component
 //super = superclass or parent class - adding to the constructor, take out super you're replacing constructor
 var Comments = function (_Component) {
   _inherits(Comments, _Component);
@@ -24913,44 +24952,25 @@ var Comments = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Comments.__proto__ || Object.getPrototypeOf(Comments)).call(this));
 
     _this.state = {
-
-      // comment: {
-      //   username: '',
-      //   body: ''
-      // },
-      list: []
+      commentsLoaded: false
     };
     return _this;
   }
 
+  //updatedList is making a copy of the array "list"
+
+
   _createClass(Comments, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      var _this2 = this;
-
-      console.log('componentDidMount - comments');
-      //grabbing the API from api/comment and using JSON stringify to display the data
-      _utils.APIManager.get('/api/comment', null, function (err, response) {
-        if (err) {
-          alert('Error: ' + err.message);
-          return;
-        }
-        _this2.setState({
-          list: response.results
-        });
-      });
-    }
-
-    //updatedList is making a copy of the array "list"
-
-  }, {
     key: 'submitComment',
     value: function submitComment(comment) {
-      var _this3 = this;
+      var _this2 = this;
 
       console.log('submitComment: ' + JSON.stringify(comment));
 
       var updatedComment = Object.assign({}, comment);
+      var zone = this.props.zones[this.props.index];
+      updatedComment['zone'] = zone._id;
+      //API call
       _utils.APIManager.post('/api/comment', updatedComment, function (err, response) {
         if (err) {
           alert(err);
@@ -24958,17 +24978,44 @@ var Comments = function (_Component) {
         }
 
         console.log(JSON.stringify(response));
-        var updatedList = Object.assign([], _this3.state.list);
+        var updatedList = Object.assign([], _this2.state.list);
         updatedList.push(response.result);
-        _this3.setState({
+        _this2.setState({
           list: updatedList
         });
       });
     }
   }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      var _this3 = this;
+
+      console.log('componentDidUpdate');
+      var zone = this.props.zones[this.props.index];
+      if (zone == null) {
+        console.log('NO SELECTED ZONE');
+        return;
+      }
+
+      console.log('SELECTED ZONE IS RDY: ' + zone._id);
+      if (this.state.commentsLoaded == true) return;
+
+      _utils.APIManager.get('/api/comment', { zone: zone._id }, function (err, response) {
+        if (err) {
+          alert('Error: ' + err.message);
+          return;
+        }
+
+        _this3.setState({ commentsLoaded: true });
+
+        var comments = response.results;
+        _this3.props.commentsReceived(comments); //this will trigger the action then gets sent to the store
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var commentList = this.state.list.map(function (comment, i) {
+      var commentList = this.props.comments.map(function (comment, i) {
         return _react2.default.createElement(
           'li',
           { key: i },
@@ -24978,13 +25025,18 @@ var Comments = function (_Component) {
         );
       });
 
+      var selectedZone = this.props.zones[this.props.index];
+      var zoneName = selectedZone == null ? '' : selectedZone.name;
+
       return _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(
           'h2',
           null,
-          ' Comments: Zone 1 '
+          ' ',
+          zoneName,
+          ' '
         ),
         _react2.default.createElement(
           'div',
@@ -25003,7 +25055,23 @@ var Comments = function (_Component) {
   return Comments;
 }(_react.Component);
 
-exports.default = Comments;
+var stateToProps = function stateToProps(state) {
+  return {
+    comments: state.comment.list,
+    index: state.zone.selectedZone,
+    zones: state.zone.list
+  };
+};
+
+var dispatchToProps = function dispatchToProps(dispatch) {
+  return {
+    commentsReceived: function commentsReceived(comments) {
+      return dispatch(_actions2.default.commentsReceived(comments));
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Comments);
 
 /***/ }),
 /* 199 */
@@ -27657,6 +27725,10 @@ var _zoneReducer = __webpack_require__(247);
 
 var _zoneReducer2 = _interopRequireDefault(_zoneReducer);
 
+var _commentReducer = __webpack_require__(250);
+
+var _commentReducer2 = _interopRequireDefault(_commentReducer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var store;
@@ -27665,7 +27737,8 @@ exports.default = {
 
   configureStore: function configureStore() {
     var reducers = (0, _redux.combineReducers)({
-      zone: _zoneReducer2.default
+      zone: _zoneReducer2.default,
+      comment: _commentReducer2.default
     });
 
     store = (0, _redux.createStore)(reducers, (0, _redux.applyMiddleware)(_reduxThunk2.default));
@@ -27725,6 +27798,7 @@ var _constants2 = _interopRequireDefault(_constants);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var initialState = {
+  selectedZone: 0,
   list: []
 };
 
@@ -27733,13 +27807,26 @@ exports.default = function () {
   var action = arguments[1];
 
 
+  var updated = Object.assign({}, state);
+
   switch (action.type) {
 
     case _constants2.default.ZONES_RECEIVED:
       console.log('ZONES_RECEIVED: ' + JSON.stringify(action.zones));
-      var updated = Object.assign({}, state);
       updated['list'] = action.zones; //Here you take the Zones.js payload (data) and assign to list value of th reducer (state)
       return updated; //here the action is similar to this.setState(...)
+
+    case _constants2.default.ZONE_CREATED:
+      console.log('ZONE_CREATED: ' + JSON.stringify(action.zone));
+
+      var updatedList = Object.assign([], updated.list);
+      updatedList.push(action.zone);
+      updated['list'] = updatedList;
+      return updated;
+
+    case _constants2.default.SELECT_ZONE:
+      updated['selectedZone'] = action.selectedZone;
+      return updated;
 
     default:
       return state;
@@ -27759,8 +27846,105 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
 
-  ZONES_RECEIVED: 'ZONES_RECEIVED'
+  ZONES_RECEIVED: 'ZONES_RECEIVED',
+  ZONE_CREATED: 'ZONE_CREATED',
+  SELECT_ZONE: 'SELECT_ZONE',
 
+  //COMMENT ACTION TYPES
+  COMMENTS_RECEIVED: 'COMMENTS_RECEIVED'
+
+  //ORDER - CONSTANTS -> ACTIONS -> REDUCERS (ACTIONS RECEIVED BY REDUCERS)
+
+};
+
+/***/ }),
+/* 249 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _constants = __webpack_require__(248);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  //type mandatory in redux
+
+  commentsReceived: function commentsReceived(comments) {
+    return {
+      type: _constants2.default.COMMENTS_RECEIVED,
+      comments: comments
+    };
+  },
+
+  zonesReceived: function zonesReceived(zones) {
+    return {
+      type: _constants2.default.ZONES_RECEIVED,
+      zones: zones
+    };
+  },
+
+  zoneCreated: function zoneCreated(zone) {
+    return {
+      type: _constants2.default.ZONE_CREATED,
+      zone: zone
+    };
+  },
+
+  selectZone: function selectZone(index) {
+    return {
+      type: _constants2.default.SELECT_ZONE,
+      selectedZone: index
+    };
+  }
+
+};
+
+/***/ }),
+/* 250 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _constants = __webpack_require__(248);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initialState = {
+  list: []
+};
+
+exports.default = function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+  var action = arguments[1];
+
+
+  switch (action.type) {
+
+    case _constants2.default.COMMENTS_RECEIVED:
+      console.log('COMMENTS_RECEIVED: ' + JSON.stringify(action.comments));
+      var updated = Object.assign({}, state);
+      updated['list'] = action.comments;
+
+      return updated;
+
+    default:
+      return state;
+  }
 };
 
 /***/ })
