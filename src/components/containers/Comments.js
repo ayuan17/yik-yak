@@ -10,7 +10,8 @@ class Comments extends Component {
   constructor(){
     super()
     this.state = {
-      commentsLoaded: false
+      commentsLoaded: false,
+      index: 0
     }
   }
 
@@ -29,11 +30,12 @@ class Comments extends Component {
       }
 
       console.log(JSON.stringify(response))
-      let updatedList = Object.assign([], this.state.list)
-      updatedList.push(response.result)
-      this.setState({
-        list: updatedList
-      })
+      this.props.commentCreated(response.result)
+      // let updatedList = Object.assign([], this.state.list)
+      // updatedList.push(response.result)
+      // this.setState({
+      //   list: updatedList
+      // })
     })
   }
 
@@ -46,7 +48,7 @@ componentDidUpdate() {
   }
 
   console.log('SELECTED ZONE IS RDY: ' + zone._id)
-  if (this.state.commentsLoaded == true)
+  if (this.props.commentsLoaded == true)
     return
 
   APIManager.get('/api/comment', {zone:zone._id}, (err, response) => {
@@ -54,8 +56,6 @@ componentDidUpdate() {
       alert('Error: '+err.message)
       return
     }
-
-    this.setState({commentsLoaded: true})
 
     let comments = response.results
     this.props.commentsReceived(comments) //this will trigger the action then gets sent to the store
@@ -91,6 +91,7 @@ componentDidUpdate() {
 const stateToProps = (state) => {
   return {
     comments: state.comment.list,
+    commentsLoaded: state.comment.commentsLoaded,
     index: state.zone.selectedZone,
     zones: state.zone.list
   }
@@ -98,7 +99,8 @@ const stateToProps = (state) => {
 
 const dispatchToProps = (dispatch) => {
   return {
-    commentsReceived: (comments) => dispatch(actions.commentsReceived(comments))
+    commentsReceived: (comments) => dispatch(actions.commentsReceived(comments)),
+    commentCreated: (comment) => dispatch(actions.commentCreated(comment))
   }
 }
 

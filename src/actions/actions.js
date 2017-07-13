@@ -9,7 +9,14 @@ export default {
       comments: comments
     }
   },
-  
+
+  commentCreated: (comment) => {
+    return {
+      type: constants.COMMENT_CREATED,
+      comment: comment
+    }
+  },
+
   zonesReceived: (zones) => {
     return {
       type: constants.ZONES_RECEIVED,

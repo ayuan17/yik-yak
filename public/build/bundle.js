@@ -24952,7 +24952,8 @@ var Comments = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Comments.__proto__ || Object.getPrototypeOf(Comments)).call(this));
 
     _this.state = {
-      commentsLoaded: false
+      commentsLoaded: false,
+      index: 0
     };
     return _this;
   }
@@ -24978,11 +24979,12 @@ var Comments = function (_Component) {
         }
 
         console.log(JSON.stringify(response));
-        var updatedList = Object.assign([], _this2.state.list);
-        updatedList.push(response.result);
-        _this2.setState({
-          list: updatedList
-        });
+        _this2.props.commentCreated(response.result);
+        // let updatedList = Object.assign([], this.state.list)
+        // updatedList.push(response.result)
+        // this.setState({
+        //   list: updatedList
+        // })
       });
     }
   }, {
@@ -24998,15 +25000,13 @@ var Comments = function (_Component) {
       }
 
       console.log('SELECTED ZONE IS RDY: ' + zone._id);
-      if (this.state.commentsLoaded == true) return;
+      if (this.props.commentsLoaded == true) return;
 
       _utils.APIManager.get('/api/comment', { zone: zone._id }, function (err, response) {
         if (err) {
           alert('Error: ' + err.message);
           return;
         }
-
-        _this3.setState({ commentsLoaded: true });
 
         var comments = response.results;
         _this3.props.commentsReceived(comments); //this will trigger the action then gets sent to the store
@@ -25058,6 +25058,7 @@ var Comments = function (_Component) {
 var stateToProps = function stateToProps(state) {
   return {
     comments: state.comment.list,
+    commentsLoaded: state.comment.commentsLoaded,
     index: state.zone.selectedZone,
     zones: state.zone.list
   };
@@ -25067,6 +25068,9 @@ var dispatchToProps = function dispatchToProps(dispatch) {
   return {
     commentsReceived: function commentsReceived(comments) {
       return dispatch(_actions2.default.commentsReceived(comments));
+    },
+    commentCreated: function commentCreated(comment) {
+      return dispatch(_actions2.default.commentCreated(comment));
     }
   };
 };
@@ -27851,7 +27855,8 @@ exports.default = {
   SELECT_ZONE: 'SELECT_ZONE',
 
   //COMMENT ACTION TYPES
-  COMMENTS_RECEIVED: 'COMMENTS_RECEIVED'
+  COMMENTS_RECEIVED: 'COMMENTS_RECEIVED',
+  COMMENT_CREATED: 'COMMENT_CREATED'
 
   //ORDER - CONSTANTS -> ACTIONS -> REDUCERS (ACTIONS RECEIVED BY REDUCERS)
 
@@ -27881,6 +27886,13 @@ exports.default = {
     return {
       type: _constants2.default.COMMENTS_RECEIVED,
       comments: comments
+    };
+  },
+
+  commentCreated: function commentCreated(comment) {
+    return {
+      type: _constants2.default.COMMENT_CREATED,
+      comment: comment
     };
   },
 
@@ -27925,6 +27937,7 @@ var _constants2 = _interopRequireDefault(_constants);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var initialState = {
+  commentsLoaded: false,
   list: []
 };
 
@@ -27933,12 +27946,28 @@ exports.default = function () {
   var action = arguments[1];
 
 
+  var updated = Object.assign({}, state);
+
   switch (action.type) {
 
     case _constants2.default.COMMENTS_RECEIVED:
       console.log('COMMENTS_RECEIVED: ' + JSON.stringify(action.comments));
-      var updated = Object.assign({}, state);
+      // let updated = Object.assign({}, state)
       updated['list'] = action.comments;
+      updated['commentsLoaded'] = true;
+
+      return updated;
+
+    case _constants2.default.SELECT_ZONE:
+      // let updated = Object.assign({}, state)
+      updated['commentsLoaded'] = false;
+      return updated;
+
+    case _constants2.default.COMMENT_CREATED:
+      console.log('COMMENT_CREATED: ' + JSON.stringify(action.comment));
+      var updatedList = Object.assign([], updated.list);
+      updatedList.push(action.comment);
+      updated['list'] = updatedList;
 
       return updated;
 
