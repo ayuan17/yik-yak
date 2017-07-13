@@ -4,15 +4,20 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom'
 // import Zones from '.components/Zones'
 import Home from './components/layout/Home'
+import { Provider } from 'react-redux'
+import store from './stores/store'
 
 class App extends Component {
 
   render(){
     return (
-      <div>
-        Yik Yak Clone!
-        <Home />
-      </div>
+      //Provider - configureStore is where all reducers are brought together
+      <Provider store={ store.configureStore() }>
+        <div>
+          Yik Yak Clone!
+          <Home />
+        </div>
+      </Provider>
     )
   }
 
