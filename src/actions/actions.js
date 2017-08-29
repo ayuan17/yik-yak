@@ -1,12 +1,13 @@
 import constants from '../constants/constants'
 
 export default {
-//type mandatory in redux
+//type mandatory in redux, other than that you can have as much stuff as you want. TYPE MANDATORY
 
-  commentsReceived: (comments) => {
+  commentsReceived: (comments, zone) => {
     return {
       type: constants.COMMENTS_RECEIVED,
-      comments: comments
+      comments: comments,
+      zone: zone
     }
   },
 

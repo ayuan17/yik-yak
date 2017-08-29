@@ -12,6 +12,17 @@ class Home extends Component {
         <div className='row'>
 
           <div className='col-md-4'>
+            <div>
+              <h2>Login</h2>
+              <input type='text' placeholder="username" /> <br />
+              <input type='text' placeholder="password" /> <br />
+              <button> Log In </button>
+              <br />
+                <h2>Sign up</h2>
+                <input type='text' placeholder="username" /> <br />
+                <input type='text' placeholder="password" /> <br />
+                <button> Join </button>
+            </div>
             <Zones />
           </div>
 

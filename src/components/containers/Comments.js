@@ -17,9 +17,8 @@ class Comments extends Component {
 
 //updatedList is making a copy of the array "list"
   submitComment(comment) {
-    console.log('submitComment: '+JSON.stringify(comment));
-
     let updatedComment = Object.assign({}, comment)
+
     let zone = this.props.zones[this.props.index]
     updatedComment['zone'] = zone._id
 //API call
@@ -30,12 +29,10 @@ class Comments extends Component {
       }
 
       console.log(JSON.stringify(response))
-      this.props.commentCreated(response.result)
-      // let updatedList = Object.assign([], this.state.list)
-      // updatedList.push(response.result)
-      // this.setState({
-      //   list: updatedList
-      // })
+      const comment = response.result
+
+      this.props.commentsReceived([comment], zone)
+
     })
   }
 
@@ -47,8 +44,8 @@ componentDidUpdate() {
     return
   }
 
-  console.log('SELECTED ZONE IS RDY: ' + zone._id)
-  if (this.props.commentsLoaded == true)
+  let commentsArray = this.props.commentsMap[zone._id]
+  if (commentsArray != null) //comments already loaded, no need to make follow up requests.
     return
 
   APIManager.get('/api/comment', {zone:zone._id}, (err, response) => {
@@ -58,19 +55,29 @@ componentDidUpdate() {
     }
 
     let comments = response.results
-    this.props.commentsReceived(comments) //this will trigger the action then gets sent to the store
+    this.props.commentsReceived(comments, zone) //this will trigger the action then gets sent to the store
   })
 }
 
   render (){
-    const commentList = this.props.comments.map((comment, i) => {
-      return (
-          <li key={i}> <Comment currentComment={ comment } /> </li>
-      )
-    })
 
     const selectedZone = this.props.zones[this.props.index]
-    const zoneName = (selectedZone == null) ? '' : selectedZone.name
+
+    let zoneName = null
+    let commentList = null
+
+    if (selectedZone != null) {
+      zoneName = selectedZone.name
+
+      let zoneComments = this.props.commentsMap[selectedZone._id]
+    if (zoneComments != null) {
+      commentList = zoneComments.map((comment, i) => { //no need for this.props. - it is a local variable
+        return (
+            <li key={i}> <Comment currentComment={ comment } /> </li>
+        )
+      })
+    }
+  }
 
     return(
       <div>
@@ -90,7 +97,8 @@ componentDidUpdate() {
 
 const stateToProps = (state) => {
   return {
-    comments: state.comment.list,
+    commentsMap: state.comment.map,
+    // comments: state.comment.list,
     commentsLoaded: state.comment.commentsLoaded,
     index: state.zone.selectedZone,
     zones: state.zone.list
@@ -99,7 +107,7 @@ const stateToProps = (state) => {
 
 const dispatchToProps = (dispatch) => {
   return {
-    commentsReceived: (comments) => dispatch(actions.commentsReceived(comments)),
+    commentsReceived: (comments, zone) => dispatch(actions.commentsReceived(comments, zone)),
     commentCreated: (comment) => dispatch(actions.commentCreated(comment))
   }
 }
