@@ -1,56 +1,58 @@
-var Comment = require('../models/Comment');
+var Profile = require('../models/Profile');
+var bcrypt = require('bcrypt');
 
 module.exports = {
 
   find: function(params, callback){
-    Comment.find(params, function(err, comments) {
+    Profile.find(params, function(err, profiles) {
       if (err) {
         callback(err, null)
         return
       }
 
-      callback(null, comments)
+      callback(null, profiles)
     })
   },
 
   findById: function(id, callback){
-    Comment.findById(id, function(err, comment) {
+    Profile.findById(id, function(err, profile) {
       if (err) {
         callback(err, null)
         return
       }
 
-      callback(null, comment)
+      callback(null, profile)
 
     })
 
   },
 
   create: function(params, callback){
-    Comment.create(params, function(err, comment){
+    params['password'] = bcrypt.hashSync(params.password, 10)
+    Profile.create(params, function(err, profile){
       if (err) {
         callback(err, null)
         return
       }
 
-      callback(null, comment)
+      callback(null, profile)
     })
 
   },
 
   update: function(id, params, callback){
-    Comment.findByIdAndUpdate(id, params, {new:true}, function(err, comment) {
+    Profile.findByIdAndUpdate(id, params, {new:true}, function(err, profile) {
       if (err) {
         callback(err, null)
         return
       }
-      callback(null, comment)
+      callback(null, profile)
     })
 
   },
 
   delete: function(id, callback){
-    Comment.findByIdAndRemove(id, function(err) {
+    Profile.findByIdAndRemove(id, function(err) {
       if(err) {
         callback(err, null)
         return
@@ -64,5 +66,3 @@ module.exports = {
 
 
 }
-
-//Once controller is set, test the profile API handler through localhost: 3000/api/profile

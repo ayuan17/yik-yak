@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import Zones from '../containers/Zones'
-import Comments from '../containers/Comments'
+import { Account, Comments, Zones } from '../containers'
 //We import Zones component to render to the Home component
 
 class Home extends Component {
@@ -12,17 +11,7 @@ class Home extends Component {
         <div className='row'>
 
           <div className='col-md-4'>
-            <div>
-              <h2>Login</h2>
-              <input type='text' placeholder="username" /> <br />
-              <input type='text' placeholder="password" /> <br />
-              <button> Log In </button>
-              <br />
-                <h2>Sign up</h2>
-                <input type='text' placeholder="username" /> <br />
-                <input type='text' placeholder="password" /> <br />
-                <button> Join </button>
-            </div>
+            <Account />
             <Zones />
           </div>
 
