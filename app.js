@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 
 //mongodb://heroku_m7mgqvh9:99tfm9l7ftnmp5kiekflj4asaa@ds031611.mlab.com:31611/heroku_m7mgqvh9
 // mongodb://localhost/yak-yik
-var dbUrl = 'mongodb://heroku_m7mgqvh9:99tfm9l7ftnmp5kiekflj4asaa@ds031611.mlab.com:31611/heroku_m7mgqvh9';
+var dbUrl = 'mongodb://localhost/yak-yik';
 mongoose.connect(dbUrl, function(err, res) {
   if (err) {
     console.log('DB CONNECTION FAILED: ' +err)
@@ -20,6 +20,7 @@ mongoose.connect(dbUrl, function(err, res) {
 
 var routes = require('./routes/index');
 var api = require('./routes/api');
+//need to set up account.js here in order to work on backend
 var account = require('./routes/account');
 
 var app = express();
@@ -38,7 +39,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/api', api);
-app.use('/account', account)
+//Here we hook up the account.js to the backend
+app.use('/account', account);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

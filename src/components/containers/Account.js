@@ -25,6 +25,33 @@ class Account extends Component {
     })
 
   }
+
+//login action
+  login(event){
+    event.preventDefault()
+    console.log(JSON.stringify(this.state.profile))
+    if (this.state.profile.username.length ==0) {
+      alert('Please enter your username')
+      return
+    }
+
+    if (this.state.profile.password.length ==0) {
+      alert('Please enter your password')
+      return
+   }
+
+   APIManager.post('/api/login', this.state.profile, (err, response) => {
+     if (err) {
+       alert(err.message)
+       return
+     }
+
+    console.log(JSON.stringify(response))
+
+   })
+
+  }
+
   //Functionality for sign up
   signup(event) {
     event.preventDefault()
@@ -57,7 +84,7 @@ class Account extends Component {
         <h2>Login</h2>
         <input id="username" onChange={this.updateProfile.bind(this)} type='text' placeholder="username" /> <br />
         <input id="password" onChange={this.updateProfile.bind(this)} type='password' placeholder="password" /> <br />
-        <button> Log In </button>
+        <button onClick={this.login.bind(this)}> Log In </button>
         <br />
           <h2>Sign up</h2>
           <input id="username" onChange={this.updateProfile.bind(this)} type='text' placeholder="username" /> <br />

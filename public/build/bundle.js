@@ -23778,6 +23778,34 @@ var Account = function (_Component) {
         profile: updatedProfile
       });
     }
+
+    //login action
+
+  }, {
+    key: 'login',
+    value: function login(event) {
+      event.preventDefault();
+      console.log(JSON.stringify(this.state.profile));
+      if (this.state.profile.username.length == 0) {
+        alert('Please enter your username');
+        return;
+      }
+
+      if (this.state.profile.password.length == 0) {
+        alert('Please enter your password');
+        return;
+      }
+
+      _utils.APIManager.post('/api/login', this.state.profile, function (err, response) {
+        if (err) {
+          alert(err.message);
+          return;
+        }
+
+        console.log(JSON.stringify(response));
+      });
+    }
+
     //Functionality for sign up
 
   }, {
@@ -23823,7 +23851,7 @@ var Account = function (_Component) {
         _react2.default.createElement('br', null),
         _react2.default.createElement(
           'button',
-          null,
+          { onClick: this.login.bind(this) },
           ' Log In '
         ),
         _react2.default.createElement('br', null),
